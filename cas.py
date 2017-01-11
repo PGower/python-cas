@@ -3,6 +3,10 @@ from six.moves.urllib import parse as urllib_parse
 from uuid import uuid4
 import datetime
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class CASError(ValueError):
     pass
@@ -149,8 +153,10 @@ class CASClientV2(CASClientBase):
         if self.proxy_callback:
             params.update({'pgtUrl': self.proxy_callback})
         base_url = urllib_parse.urljoin(self.server_url, self.url_suffix)
+        logger.info('Calling {} for ticket verification.'.format(base_url))
         page = requests.get(base_url, params=params)
         try:
+            logger.debug(page.content)
             return page.content
         finally:
             page.close()
